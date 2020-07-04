@@ -141,7 +141,7 @@ export class OffsetManager<T> {
   }
 
   async fillAndTake({ date: rawDate }: { date: moment.Moment }) {
-    const { repo, timeUnit, maxAttempts } = this
+    const { repo, timeUnit } = this
 
     const date = moment.utc(rawDate).startOf(timeUnit)
 
