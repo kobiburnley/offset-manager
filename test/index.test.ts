@@ -13,7 +13,16 @@ describe("fillOffets", () => {
 
 describe("takePageExecution", () => {
   it("take", world.takePageExecution.take)
-  it("does not take same page twice", world.takePageExecution.notTakesSamePageTwice)
+  it(
+    "does not take same page twice",
+    world.takePageExecution.notTakesSamePageTwice
+  )
+
+  it("takes failed execution", world.takePageExecution.takesFailedExecution)
+  it(
+    "does not take faield execution max attempts",
+    world.takePageExecution.notTakesFailedExecutionMaxAttempts
+  )
 })
 
 // afterAll(container.dbStateManager.clear)
