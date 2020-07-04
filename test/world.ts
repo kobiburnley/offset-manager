@@ -2,7 +2,7 @@ import { FillOffsetsTest } from "./fillOffsetsTest"
 import { OffsetManager } from "../src/service/offsetManager"
 import { Params } from "./params"
 import { TakePageExecutionTest } from './takePageExecutionTest'
-import { CreatePageExecutionTest } from './CreatePageExecutionTest'
+import { CreatePageExecutionTest } from './createPageExecutionTest'
 
 export interface WorldParams {
   offsetManager: OffsetManager<Params>
