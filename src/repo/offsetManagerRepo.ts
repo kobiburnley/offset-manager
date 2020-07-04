@@ -42,6 +42,12 @@ export class OffsetManagerRepo<T> {
         $set: {
           status: "locked",
         },
+      },
+      {
+        sort: {
+          date: 1,
+          page: 1
+        }
       }
     )
 
@@ -68,11 +74,7 @@ export class OffsetManagerRepo<T> {
     return { insertedIds, insertedCount }
   }
 
-  async createFirstPageExecution({
-    offsetIds,
-  }: {
-    offsetIds: (string | ObjectId)[]
-  }) {
+  async createFirstPageExecution({ offsetIds }: { offsetIds: ObjectId[] }) {
     const db = await this.db()
 
     const offsets = (await db.offsets
@@ -104,7 +106,7 @@ export class OffsetManagerRepo<T> {
   }) {
     const db = await this.db()
 
-    await db.executions.bulkWrite(
+    const { insertedIds, modifiedCount } = await db.executions.bulkWrite(
       new Array(totalPages).fill(null).map((_, index) => ({
         updateOne: {
           filter: {
@@ -123,6 +125,17 @@ export class OffsetManagerRepo<T> {
         },
       }))
     )
+
+    return {
+      insertedIds,
+      modifiedCount,
+    }
+  }
+
+  async getOffsetById({ offsetId }: { offsetId: ObjectId }) {
+    const db = await this.db()
+
+    return await db.offsets.findOne({ _id: offsetId })
   }
 
   async updateOffset({

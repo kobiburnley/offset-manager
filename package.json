@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "services": "docker-compose up -V --abort-on-container-exit",
     "build": "tsc -p tsconfig.build.json",

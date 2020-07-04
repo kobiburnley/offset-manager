@@ -17,11 +17,13 @@ export class FillOffsetsTest {
   fill = once(async () => {
     const { offsetManager } = this
 
-    const { insertedCount } = await offsetManager.fill({
+    const { offsetIds } = await offsetManager.fill({
       date: moment.utc(),
     })
 
-    expect(insertedCount).toBe(10)
+    expect(offsetIds.length).toBe(10)
+
+    return {offsetIds}
   })
 
   failsAddingSameOffest = once(async () => {

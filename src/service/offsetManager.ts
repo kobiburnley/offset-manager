@@ -1,8 +1,8 @@
-import { OffsetManagerRepo } from "../repo/offsetManagerRepo"
-import { TimeUnit } from "../model/timeUnit"
 import * as moment from "moment"
+import { ObjectId, PageExecution } from "../model/offset"
+import { TimeUnit } from "../model/timeUnit"
+import { OffsetManagerRepo } from "../repo/offsetManagerRepo"
 import { permuteRecord, RecordTupleValues } from "../util/permuteRecord"
-import { PageExecution, Offset } from "../model/offset"
 
 export interface OffsetManagerParams<T> {
   propsValues: RecordTupleValues<T>
@@ -78,20 +78,37 @@ export class OffsetManager<T> {
   }
 
   async createExecutionPages({
-    offset,
+    offsetId,
     totalPages,
   }: {
-    offset: Offset<T>
+    offsetId: ObjectId
     totalPages: number
   }) {
     const { repo } = this
 
-    await Promise.all([
-      repo.updateOffset({offset, values: {
-        totalPages
-      }}),
-      repo.createAllPageExecutions({ offset, totalPages })
+    const offset = await repo.getOffsetById({ offsetId })
+
+    if (offset == null) {
+      throw new Error("No such offset")
+    }
+
+    const [{modifiedCount}, { insertedIds: insertedPageExecutionIds }] = await Promise.all([
+      repo.updateOffset({
+        offset,
+        values: {
+          totalPages,
+        },
+      }),
+      repo.createAllPageExecutions({ offset, totalPages }),
     ])
+
+    const updatedOffset = await repo.getOffsetById({ offsetId })
+
+    return {
+      modifiedCount,
+      offset: updatedOffset,
+      insertedPageExecutionIds,
+    }
   }
 
   async fill({ date }: { date: moment.Moment }) {
@@ -104,11 +121,13 @@ export class OffsetManager<T> {
       date: date.startOf(timeUnit).toDate(),
     })
 
+    const offsetIds = Object.values(offsetInsertions.insertedIds)
+
     await repo.createFirstPageExecution({
-      offsetIds: Object.values(offsetInsertions.insertedIds),
+      offsetIds,
     })
 
-    return offsetInsertions
+    return { offsetIds }
   }
 
   async take({ date }: { date: moment.Moment }) {
