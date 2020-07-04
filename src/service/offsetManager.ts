@@ -117,7 +117,7 @@ export class OffsetManager<T> {
 
     const offsetInsertions = await repo.saveMany({
       permutations,
-      date: date.startOf(timeUnit).toDate(),
+      date: moment.utc(date).startOf(timeUnit).toDate(),
     })
 
     const offsetIds = Object.values(offsetInsertions.insertedIds)
@@ -133,10 +133,31 @@ export class OffsetManager<T> {
     const { repo, timeUnit, maxAttempts } = this
 
     const pageExecution = await repo.getFirstReadyOn({
-      date: date.startOf(timeUnit).toDate(),
+      date: moment.utc(date).startOf(timeUnit).toDate(),
       maxAttempts,
     })
 
     return pageExecution
+  }
+
+  async fillAndTake({ date: rawDate }: { date: moment.Moment }) {
+    const { repo, timeUnit, maxAttempts } = this
+
+    const date = moment.utc(rawDate).startOf(timeUnit)
+
+    const offset = await repo.getFirstOffsetByDate({
+      date: date.toDate(),
+    })
+
+    if (offset == null) {
+      await this.fill({ date })
+    }
+
+    const pageExecution = await this.take({ date })
+
+    return {
+      pageExecution,
+      didFill: offset == null,
+    }
   }
 }

@@ -31,7 +31,7 @@ export class TakePageExecutionTest {
 
     expect(pageExecution!.status).toBe("locked")
     expect(pageExecution!.date).toEqual(
-      date.startOf(offsetManager.timeUnit).toDate()
+      moment.utc(date).startOf(offsetManager.timeUnit).toDate()
     )
 
     return pageExecution
@@ -96,5 +96,21 @@ export class TakePageExecutionTest {
       date: moment.utc(pageExecution!.date),
     })
     expect(pageExecutionAfterMaxAttempts!._id).not.toEqual(pageExecution._id)
+  })
+
+  fillAndTake = once(async () => {
+    const { offsetManager } = this
+
+    const date = moment.utc().add(1, "day")
+
+    const {pageExecution, didFill} = await offsetManager.fillAndTake({ date })
+
+    expect(didFill).toBe(true)
+    expect(pageExecution!.date).toEqual(
+      moment.utc(date).startOf(offsetManager.timeUnit).toDate()
+    )
+
+    const {didFill: didFill2} = await offsetManager.fillAndTake({ date })
+    expect(didFill2).toBe(false)
   })
 }

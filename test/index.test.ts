@@ -23,6 +23,8 @@ describe("takePageExecution", () => {
     "does not take faield execution max attempts",
     world.takePageExecution.notTakesFailedExecutionMaxAttempts
   )
+
+  it("fill and take", world.takePageExecution.fillAndTake)
 })
 
 describe("createExecutionPages", () => {
