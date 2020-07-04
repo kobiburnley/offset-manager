@@ -8,6 +8,9 @@ jobs:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: example
     steps:
+      - add_ssh_keys:
+        fingerprints:
+          - "10:c5:0f:62:f3:3b:b9:c2:9c:dc:c7:89:5b:e4:52:ae"
       - checkout
       - run:
           name: Install
@@ -23,6 +26,15 @@ jobs:
           command: |
             npm run coverage
             npm run codecov
+      - run:
+          name: Publish
+          command: |
+            git config --global user.email circleci@circleci.com
+            git config --global user.name CircleCI
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            git add 'package.json' 'package-lock.json'
+            git diff-index --quiet --cached origin/$CIRCLE_BRANCH || (git commit -m 'Lock [skip ci]')
+            if [[ "$CIRCLE_BRANCH" = "master" ]] || [[ "$CIRCLE_BRANCH" =~ hotfix* ]]; then npm run cd; else git push origin $CIRCLE_BRANCH; fi
 workflows:
   version: 2
   build_and_publish:

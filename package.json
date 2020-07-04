@@ -12,7 +12,8 @@
     "lint": "eslint -c .eslintrc.js --ext .ts src",
     "test": "jest",
     "coverage": "jest --coverage --coverageReporters=json",
-    "codecov": "codecov -f coverage/*.json"
+    "codecov": "codecov -f coverage/*.json",
+    "cd": "standard-version -m \"chore(release): %s [skip ci]\" && git push --follow-tags origin $CIRCLE_BRANCH && npm publish"
   },
   "author": "",
   "license": "ISC",
