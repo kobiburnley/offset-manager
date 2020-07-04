@@ -1,0 +1,7 @@
+node_modules
+packages/*/lib
+*.tsbuildinfo
+/coverage
+package-lock.json
+packages/*/props.local.json
+/lib

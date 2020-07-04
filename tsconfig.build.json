@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "noEmitOnError": true,
+    "noImplicitReturns": true,
+    "target": "ES2018",
+    "strict": true,
+    "declaration": true,
+    "outDir": "lib",
+    "rootDir": "src",
+    "jsx": "react",
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "composite": true
+  },
+  "include": ["src/**/*.ts*"]
+}
