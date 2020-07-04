@@ -1,5 +1,5 @@
-import { Collection, UpdateQuery, WithId } from "mongodb"
-import { Offset, PageExecution } from "../model/offset"
+import { Collection, WithId } from "mongodb"
+import { Offset, PageExecution, ObjectId } from "../model/offset"
 
 interface DB<T> {
   offsets: Collection<Offset<T>>
@@ -17,7 +17,13 @@ export class OffsetManagerRepo<T> {
     this.db = params.db
   }
 
-  async getFirstReadyOn({ date, maxAttempts }: { date: Date, maxAttempts: number }) {
+  async getFirstReadyOn({
+    date,
+    maxAttempts,
+  }: {
+    date: Date
+    maxAttempts: number
+  }) {
     const { db } = this
 
     const { executions } = await db()
@@ -27,7 +33,10 @@ export class OffsetManagerRepo<T> {
         date,
         $or: [
           { status: "ready" },
-          { status: "failed", [`executedAt.${maxAttempts}`]: { $exists: false } },
+          {
+            status: "failed",
+            [`executedAt.${maxAttempts}`]: { $exists: false },
+          },
         ],
       },
       {
@@ -63,7 +72,7 @@ export class OffsetManagerRepo<T> {
   async createFirstPageExecutions({
     offsetIds,
   }: {
-    offsetIds: (string | {})[]
+    offsetIds: (string | ObjectId)[]
   }) {
     const db = await this.db()
 

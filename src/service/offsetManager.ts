@@ -2,7 +2,6 @@ import { OffsetManagerRepo } from "../repo/offsetManagerRepo"
 import { TimeUnit } from "../model/timeUnit"
 import * as moment from "moment"
 import { permuteRecord, RecordTupleValues } from "../util/permuteRecord"
-import * as _ from "lodash"
 
 export interface OffsetManagerParams<T> {
   propsValues: RecordTupleValues<T>
@@ -24,10 +23,10 @@ export class OffsetManager<T> {
     this.maxAttempts = params.maxAttempts
   }
 
-  async start(props: T) {
-    const { propsValues, repo, timeUnit } = this
+  // async start(props: T) {
+    // const { propsValues, repo, timeUnit } = this
 
-    const now = moment.utc().toDate()
+    // const now = moment.utc().toDate()
 
     // const job = await repo.getJob({
     //   now,
@@ -39,11 +38,8 @@ export class OffsetManager<T> {
     // })
 
     // return job.id
-  }
+  // }
 
-  async done<R>(reportId: string, result: R) {}
-
-  async error<R>(reportId: string, result: R) {}
 
   async fill({ date }: { date: moment.Moment }) {
     const { propsValues, repo, timeUnit } = this

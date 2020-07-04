@@ -8,7 +8,7 @@ export function permuteRecord<T>(mat: RecordTupleValues<T>): T[] {
   const queue = [{ level: 0, path: {} }]
 
   while (queue.length) {
-    const { level, path } = queue.shift()!
+    const { level, path } = queue.shift()! // eslint-disable-line @typescript-eslint/no-non-null-assertion
 
     const key = keys[level]
 

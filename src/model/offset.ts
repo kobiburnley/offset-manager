@@ -1,14 +1,17 @@
+export interface ObjectId {
+  toString(): string
+}
 export interface Offset<T> {
-  _id?: string | {}
+  _id?: string | ObjectId
   date: Date
   params: T
   totalPages: number
 }
 
 export interface PageExecution {
-  _id?: string | {}
+  _id?: string | ObjectId
   page: number
-  offsetId: string | {}
+  offsetId: string | ObjectId
   date: Date
 
   status: "ready" | "started" | "done" | "failed" | "locked"
