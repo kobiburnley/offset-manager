@@ -103,12 +103,16 @@ export class TakePageExecutionTest {
 
     const date = moment.utc().add(1, "day")
 
-    const {pageExecution, didFill} = await offsetManager.fillAndTake({ date })
+    const {pageExecution, didFill, offset} = await offsetManager.fillAndTake({ date })
 
     expect(didFill).toBe(true)
+    expect(offset!.date).toEqual(
+      moment.utc(date).startOf(offsetManager.timeUnit).toDate()
+    )   
     expect(pageExecution!.date).toEqual(
       moment.utc(date).startOf(offsetManager.timeUnit).toDate()
     )
+    expect(offset!._id).toEqual(pageExecution!.offsetId)
 
     const {didFill: didFill2} = await offsetManager.fillAndTake({ date })
     expect(didFill2).toBe(false)
