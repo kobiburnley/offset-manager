@@ -1,5 +1,4 @@
 import { DB } from "../src/db/db"
-import { once } from "lodash"
 
 export interface DBStateManagerParams {
   db: () => Promise<DB<any>>
@@ -12,7 +11,7 @@ export class DBStateManager {
     this.db = params.db
   }
 
-  init = once(async () => {
+  init = async () => {
     const { executions, offsets, group } = await this.db()
 
     await Promise.all([
@@ -31,18 +30,28 @@ export class DBStateManager {
         unique: true,
       }
     )
-  })
+  }
 
-  clear = once(async () => {
-    const { executions, offsets } = await this.db()
+  clear = async () => {
+    const { executions, offsets, group } = await this.db()
     try {
-      await Promise.all([offsets.drop(), executions.drop()])
-    } catch (e) {}
-  })  
+      await Promise.all([
+        group.dropCollection(offsets.collectionName),
+        group.dropCollection(executions.collectionName)
+      ])
+    } catch (e) {
+      console.error(e)
+    }
+  }
   
-  close = once(async () => {
+  clearAndClose = async () => {
+    await this.clear()
+    await this.close()
+  }
+  
+  close = async () => {
     const { mongo } = await this.db()
 
     await mongo.close()
-  })
+  }
 }
