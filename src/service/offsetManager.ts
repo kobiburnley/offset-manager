@@ -145,19 +145,25 @@ export class OffsetManager<T> {
 
     const date = moment.utc(rawDate).startOf(timeUnit)
 
-    const offset = await repo.getFirstOffsetByDate({
+    const firstOffsetForDate = await repo.getFirstOffsetByDate({
       date: date.toDate(),
     })
 
-    if (offset == null) {
+    if (firstOffsetForDate == null) {
       await this.fill({ date })
     }
 
     const pageExecution = await this.take({ date })
 
+    const offset =
+      pageExecution != null
+        ? await repo.getOffsetById({ offsetId: pageExecution.offsetId })
+        : null
+
     return {
       pageExecution,
-      didFill: offset == null,
+      didFill: firstOffsetForDate == null,
+      offset,
     }
   }
 }
