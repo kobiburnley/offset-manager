@@ -5,12 +5,12 @@ jobs:
       - image: circleci/node:lts
       - image: circleci/mongo:3.6.12
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: example
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
     steps:
       - add_ssh_keys:
-        fingerprints:
-          - "10:c5:0f:62:f3:3b:b9:c2:9c:dc:c7:89:5b:e4:52:ae"
+          fingerprints:
+            - "15:97:81:6b:69:3c:a2:83:a9:1c:ac:11:c0:9d:0f:ec"
       - checkout
       - run:
           name: Install
