@@ -11,6 +11,7 @@ export const mongo = MongoClient.connect("mongodb://localhost", {
     password: "example",
   },
   useNewUrlParser: true,
+  useUnifiedTopology: true
 })
 
 const db = () =>
