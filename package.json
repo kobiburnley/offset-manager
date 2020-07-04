@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "services": "docker-compose up -V --abort-on-container-exit",
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint -c .eslintrc.js --ext .ts src",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage --coverageReporters=json",
+    "codecov": "codecov -f coverage/*.json",
+    "cd": "standard-version -m \"chore(release): %s [skip ci]\" && git push --follow-tags origin $CIRCLE_BRANCH && npm publish"
   },
   "author": "",
   "license": "ISC",
@@ -27,9 +33,11 @@
     "@types/mongodb": "^3.5.25",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
+    "codecov": "^3.7.0",
     "eslint": "^7.4.0",
     "jest": "^26.1.0",
     "mongodb": "^3.5.9",
+    "standard-version": "^8.0.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   },

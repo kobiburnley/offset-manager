@@ -5,9 +5,12 @@ jobs:
       - image: circleci/node:lts
       - image: circleci/mongo:3.6.12
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: example
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "15:97:81:6b:69:3c:a2:83:a9:1c:ac:11:c0:9d:0f:ec"
       - checkout
       - run:
           name: Install
@@ -21,7 +24,17 @@ jobs:
       - run:
           name: Test
           command: |
-            npm test
+            npm run coverage
+            npm run codecov
+      - run:
+          name: Publish
+          command: |
+            git config --global user.email circleci@circleci.com
+            git config --global user.name CircleCI
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            git add 'package.json'
+            git diff-index --quiet --cached origin/$CIRCLE_BRANCH || (git commit -m 'Lock [skip ci]')
+            if [[ "$CIRCLE_BRANCH" = "master" ]] || [[ "$CIRCLE_BRANCH" =~ hotfix* ]]; then npm run cd; else git push origin $CIRCLE_BRANCH; fi
 workflows:
   version: 2
   build_and_publish:

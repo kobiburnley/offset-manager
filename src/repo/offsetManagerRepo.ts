@@ -1,6 +1,5 @@
 import { Collection, WithId } from "mongodb"
-import { Offset, PageExecution, ObjectId } from "../model/offset"
-
+import { ObjectId, Offset, PageExecution } from "../model/offset"
 interface DB<T> {
   offsets: Collection<Offset<T>>
   executions: Collection<PageExecution>
@@ -35,7 +34,7 @@ export class OffsetManagerRepo<T> {
           { status: "ready" },
           {
             status: "failed",
-            [`executedAt.${maxAttempts}`]: { $exists: false },
+            [`executedAt.${maxAttempts - 1}`]: { $exists: false },
           },
         ],
       },
@@ -43,6 +42,12 @@ export class OffsetManagerRepo<T> {
         $set: {
           status: "locked",
         },
+      },
+      {
+        sort: {
+          date: 1,
+          page: 1
+        }
       }
     )
 
@@ -69,11 +74,7 @@ export class OffsetManagerRepo<T> {
     return { insertedIds, insertedCount }
   }
 
-  async createFirstPageExecutions({
-    offsetIds,
-  }: {
-    offsetIds: (string | ObjectId)[]
-  }) {
+  async createFirstPageExecution({ offsetIds }: { offsetIds: ObjectId[] }) {
     const db = await this.db()
 
     const offsets = (await db.offsets
@@ -96,9 +97,95 @@ export class OffsetManagerRepo<T> {
     )
   }
 
-  // takeJob(params: {date: Date}) {}
+  async createAllPageExecutions({
+    offset,
+    totalPages,
+  }: {
+    offset: Offset<T>
+    totalPages: number
+  }) {
+    const db = await this.db()
 
-  // getJob(params: {props: T, now: Date}): Promise<Offset<T>> { }
+    const { upsertedCount } = await db.executions.bulkWrite(
+      new Array(totalPages).fill(null).map((_, index) => ({
+        updateOne: {
+          filter: {
+            offsetId: offset._id,
+            date: offset.date,
+            page: index + 1,
+          },
+          update: {
+            $setOnInsert: {
+              status: "ready",
+              result: null,
+              executedAt: [],
+            },
+          },
+          upsert: true,
+        },
+      }))
+    )
 
-  // updateJob(id: string, values: Partial<Offset<T>>): Promise<Offset<T>> {}
+    return {
+      upsertedCount,
+    }
+  }
+
+  async getOffsetById({ offsetId }: { offsetId: ObjectId }) {
+    const db = await this.db()
+
+    return await db.offsets.findOne({ _id: offsetId })
+  }
+
+  async updateOffset({
+    offset,
+    values,
+  }: {
+    offset: Offset<T>
+    values: Partial<Offset<T>>
+  }) {
+    const db = await this.db()
+
+    const { modifiedCount } = await db.offsets.updateOne(
+      {
+        _id: offset._id,
+      },
+      {
+        $set: {
+          totalPages: values.totalPages,
+        },
+      }
+    )
+
+    return { modifiedCount }
+  }
+
+  async updatePageExecution({
+    pageExecution,
+    values,
+  }: {
+    pageExecution: PageExecution
+    values: Partial<PageExecution>
+  }) {
+    const db = await this.db()
+
+    const { modifiedCount } = await db.executions.updateOne(
+      {
+        _id: pageExecution._id,
+      },
+      {
+        $set: {
+          status: values.status,
+          result: values.result,
+        },
+        $addToSet: {
+          ...(values.executedAt
+            ? { executedAt: { $each: values.executedAt } }
+            : {}),
+        },
+      }
+    )
+
+    return { modifiedCount }
+  }
 }

@@ -5,3 +5,4 @@ packages/*/lib
 package-lock.json
 packages/*/props.local.json
 /lib
+/.idea
