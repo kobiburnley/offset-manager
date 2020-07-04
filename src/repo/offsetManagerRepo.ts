@@ -185,11 +185,13 @@ export class OffsetManagerRepo<T> {
           status: values.status,
           result: values.result,
         },
-        $addToSet: {
-          ...(values.executedAt
-            ? { executedAt: { $each: values.executedAt } }
-            : {}),
-        },
+        ...(values.executedAt
+          ? {
+              $addToSet: {
+                executedAt: { $each: values.executedAt },
+              },
+            }
+          : {}),
       }
     )
 
