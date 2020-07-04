@@ -23,11 +23,13 @@ describe("takePageExecution", () => {
     "does not take faield execution max attempts",
     world.takePageExecution.notTakesFailedExecutionMaxAttempts
   )
+
+  it("fill and take", world.takePageExecution.fillAndTake)
 })
 
 describe("createExecutionPages", () => {
   it("creates", world.createPageExecution.creates)
 })
 
-afterAll(container.dbStateManager.clear)
+// afterAll(container.dbStateManager.clear)
 afterAll(container.dbStateManager.close)

@@ -16,6 +16,14 @@ export class OffsetManagerRepo<T> {
     this.db = params.db
   }
 
+  async getFirstOffsetByDate({ date }: { date: Date }) {
+    const db = await this.db()
+
+    return db.offsets.findOne({
+      date,
+    })
+  }
+
   async getFirstReadyOn({
     date,
     maxAttempts,
@@ -24,7 +32,6 @@ export class OffsetManagerRepo<T> {
     maxAttempts: number
   }) {
     const { db } = this
-
     const { executions } = await db()
 
     const { value } = await executions.findOneAndUpdate(
@@ -46,8 +53,8 @@ export class OffsetManagerRepo<T> {
       {
         sort: {
           date: 1,
-          page: 1
-        }
+          page: 1,
+        },
       }
     )
 
