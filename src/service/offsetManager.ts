@@ -92,7 +92,7 @@ export class OffsetManager<T> {
       throw new Error("No such offset")
     }
 
-    const [{modifiedCount}, { insertedIds: insertedPageExecutionIds }] = await Promise.all([
+    const [, { upsertedCount }] = await Promise.all([
       repo.updateOffset({
         offset,
         values: {
@@ -105,9 +105,8 @@ export class OffsetManager<T> {
     const updatedOffset = await repo.getOffsetById({ offsetId })
 
     return {
-      modifiedCount,
+      upsertedCount,
       offset: updatedOffset,
-      insertedPageExecutionIds,
     }
   }
 

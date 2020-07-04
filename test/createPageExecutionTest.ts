@@ -24,18 +24,15 @@ export class CreatePageExecutionTest {
       offsetIds: [offsetId],
     } = await fillOffsets()
 
-    console.log("offsetId", offsetId)
-
     const {
       offset,
-      insertedPageExecutionIds,
+      upsertedCount
     } = await offsetManager.createExecutionPages({
       offsetId,
       totalPages: 8,
     })
 
     expect(offset!.totalPages).toBe(8)
-
-    console.log("insertedPageExecutionIds", insertedPageExecutionIds)
+    expect(upsertedCount).toBe(7)
   })
 }

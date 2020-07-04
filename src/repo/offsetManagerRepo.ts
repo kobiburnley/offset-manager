@@ -106,7 +106,7 @@ export class OffsetManagerRepo<T> {
   }) {
     const db = await this.db()
 
-    const { insertedIds, modifiedCount } = await db.executions.bulkWrite(
+    const { upsertedCount } = await db.executions.bulkWrite(
       new Array(totalPages).fill(null).map((_, index) => ({
         updateOne: {
           filter: {
@@ -127,8 +127,7 @@ export class OffsetManagerRepo<T> {
     )
 
     return {
-      insertedIds,
-      modifiedCount,
+      upsertedCount,
     }
   }
 

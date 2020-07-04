@@ -29,5 +29,5 @@ describe("createExecutionPages", () => {
   it("creates", world.createPageExecution.creates)
 })
 
-// afterAll(container.dbStateManager.clear)
+afterAll(container.dbStateManager.clear)
 afterAll(container.dbStateManager.close)
