@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/kobiburnley/offset-manager/compare/v1.2.3...v1.3.0) (2020-07-18)
+
+
+### Features
+
+* DB collections config ([#6](https://github.com/kobiburnley/offset-manager/issues/6)) ([d261347](https://github.com/kobiburnley/offset-manager/commit/d261347bde6d7d405f969964466652891b0922b9))
+
 ### [1.2.3](https://github.com/kobiburnley/offset-manager/compare/v1.2.2...v1.2.3) (2020-07-04)
 
 
