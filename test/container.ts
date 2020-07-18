@@ -11,7 +11,7 @@ export const mongo = MongoClient.connect("mongodb://localhost", {
     password: "example",
   },
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
 
 const db = () =>
@@ -19,6 +19,10 @@ const db = () =>
     return new DB<Params>({
       dbName: "test",
       mongo,
+      collections: {
+        offsets: "test_offsets",
+        executions: "test_executions",
+      },
     })
   })
 
