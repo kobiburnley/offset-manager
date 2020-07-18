@@ -150,10 +150,8 @@ export class OffsetManager<T> {
     return pageExecution
   }
 
-  async fillAndTake({ date: rawDate }: { date: moment.Moment }) {
-    const { repo, timeUnit } = this
-
-    const date = moment.utc(rawDate).startOf(timeUnit)
+  async fillIfNoRecords({date}: {date: moment.Moment}) {
+    const { repo } = this
 
     const firstOffsetForDate = await repo.getFirstOffsetByDate({
       date: date.toDate(),
@@ -162,6 +160,16 @@ export class OffsetManager<T> {
     if (firstOffsetForDate == null) {
       await this.fill({ date })
     }
+
+    return firstOffsetForDate
+  }
+
+  async fillAndTake({ date: rawDate }: { date: moment.Moment }) {
+    const { repo, timeUnit } = this
+
+    const date = moment.utc(rawDate).startOf(timeUnit)
+
+    const firstOffsetForDate = await this.fillIfNoRecords({date})
 
     const pageExecution = await this.take({ date })
 
