@@ -130,13 +130,21 @@ export class OffsetManager<T> {
   }
 
   async takeAny() {
-    const { repo, timeUnit, maxAttempts } = this
+    const { repo, maxAttempts } = this
 
     const pageExecution = await repo.getFirstReady({
       maxAttempts,
     })
 
-    return pageExecution
+    const offset =
+      pageExecution != null
+        ? await repo.getOffsetById({ offsetId: pageExecution.offsetId })
+        : null
+
+    return {
+      pageExecution,
+      offset,
+    }
   }
 
   async take({ date }: { date: moment.Moment }) {
@@ -150,7 +158,7 @@ export class OffsetManager<T> {
     return pageExecution
   }
 
-  async fillIfNoRecords({date}: {date: moment.Moment}) {
+  async fillIfNoRecords({ date }: { date: moment.Moment }) {
     const { repo } = this
 
     const firstOffsetForDate = await repo.getFirstOffsetByDate({
@@ -169,7 +177,7 @@ export class OffsetManager<T> {
 
     const date = moment.utc(rawDate).startOf(timeUnit)
 
-    const firstOffsetForDate = await this.fillIfNoRecords({date})
+    const firstOffsetForDate = await this.fillIfNoRecords({ date })
 
     const pageExecution = await this.take({ date })
 

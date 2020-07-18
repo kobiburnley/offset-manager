@@ -43,8 +43,9 @@ export class TakePageExecutionTest {
 
     await fillOffsets()
 
-    const pageExecution = await offsetManager.takeAny()
+    const {pageExecution, offset} = await offsetManager.takeAny()
 
+    expect(pageExecution!.offsetId).toEqual(offset!._id)
     expect(pageExecution!.status).toBe("locked")
 
     return pageExecution
