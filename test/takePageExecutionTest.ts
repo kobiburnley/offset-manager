@@ -43,12 +43,10 @@ export class TakePageExecutionTest {
 
     await fillOffsets()
 
-    const date = moment.utc()
-
     const pageExecution = await offsetManager.takeAny()
 
     expect(pageExecution!.status).toBe("locked")
-    
+
     return pageExecution
   })
 
