@@ -17,6 +17,8 @@ describe("takePageExecution", () => {
     "does not take same page twice",
     world.takePageExecution.notTakesSamePageTwice
   )
+  it("take any", world.takePageExecution.takeAny)
+
 
   it("takes failed execution", world.takePageExecution.takesFailedExecution)
   it(

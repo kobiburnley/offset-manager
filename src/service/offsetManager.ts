@@ -129,6 +129,16 @@ export class OffsetManager<T> {
     return { offsetIds }
   }
 
+  async takeAny() {
+    const { repo, timeUnit, maxAttempts } = this
+
+    const pageExecution = await repo.getFirstReady({
+      maxAttempts,
+    })
+
+    return pageExecution
+  }
+
   async take({ date }: { date: moment.Moment }) {
     const { repo, timeUnit, maxAttempts } = this
 
