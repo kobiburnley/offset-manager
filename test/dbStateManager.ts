@@ -40,7 +40,7 @@ export class DBStateManager {
         group.dropCollection(executions.collectionName)
       ])
     } catch (e) {
-      console.error(e)
+      console.info("DBStateManager.clear(): nothing dropped")
     }
   }
   

@@ -37,6 +37,19 @@ export class TakePageExecutionTest {
     return pageExecution
   })
 
+  
+  takeAny = once(async () => {
+    const { offsetManager, fillOffsets } = this
+
+    await fillOffsets()
+
+    const pageExecution = await offsetManager.takeAny()
+
+    expect(pageExecution!.status).toBe("locked")
+
+    return pageExecution
+  })
+
   notTakesSamePageTwice = once(async () => {
     const { offsetManager } = this
 
@@ -117,4 +130,5 @@ export class TakePageExecutionTest {
     const {didFill: didFill2} = await offsetManager.fillAndTake({ date })
     expect(didFill2).toBe(false)
   })
+
 }

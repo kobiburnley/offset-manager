@@ -24,6 +24,46 @@ export class OffsetManagerRepo<T> {
     })
   }
 
+  async getFirstReady({
+    maxAttempts,
+  }: {
+    maxAttempts: number
+  }) {
+    const { db } = this
+    const { executions } = await db()
+
+    const { value } = await executions.findOneAndUpdate(
+      {
+        $or: [
+          { status: "ready" },
+          {
+            status: "failed",
+            [`executedAt.${maxAttempts - 1}`]: { $exists: false },
+          },
+        ],
+      },
+      {
+        $set: {
+          status: "locked",
+        },
+      },
+      {
+        sort: {
+          date: 1,
+          page: 1,
+        },
+      }
+    )
+
+    if (value != null) {
+      return executions.findOne({
+        _id: value._id,
+      })
+    }
+
+    return null
+  }
+
   async getFirstReadyOn({
     date,
     maxAttempts,
